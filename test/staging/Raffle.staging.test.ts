@@ -33,20 +33,35 @@ developmentChains.includes(network.name)
 
                   console.log("Setting up Listener...")
 
+                  // setup listner before we enter the raffle
                   await new Promise<void>(async (resolve, reject) => {
                       try {
+                          const recentWinner = await raffle.getRecentWinner()
+                          const raffleState = await raffle.getRaffleState()
+                          const winnerEndingBalance = await accounts[0].getBalance()
+                          const endingTimeStamp = await raffle.getLastTimeStamp()
+
+                          await expect(raffle.getPlayer(0)).to.be.reverted // check if players array is reset
+                          assert.equal(recentWinner.toString(), accounts[0].address)
+                          assert.equal(raffleState, 0) // raffle state should be open after winner is declared
+                          assert.equal(
+                              winnerEndingBalance.toString(),
+                              winnerStartingBalance.add(entranceFee).toString()
+                          )
+                          assert(endingTimeStamp > startingTimeStamp)
+                          resolve()
                       } catch (e) {
                           console.log(e)
                           reject(e)
                       }
                   })
-                  // setup listner before we enter the raffle
 
                   // Then enter the raffle
                   console.log("Entering Raffle...")
                   const tx = await raffle.enterRaffle({ value: entranceFee })
                   await tx.wait(1)
                   console.log("Ok, time to wait...")
+                  const winnerStartingBalance = await accounts[0].getBalance()
               })
           })
       })
