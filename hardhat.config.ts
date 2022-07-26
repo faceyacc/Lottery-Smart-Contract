@@ -23,6 +23,7 @@ const config: HardhatUserConfig = {
         rinkeby: {
             chainId: 4,
             url: RINKEBY_RPC_URL,
+            saveDeployments: true,
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
         },
     },

@@ -1,32 +1,33 @@
-import { ethers, network } from "hardhat"
-import { DeployFunction } from "hardhat-deploy/dist/types"
+import { getNamedAccounts, deployments, network, ethers } from "hardhat"
+import { DeployFunction } from "hardhat-deploy/types"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 
-import { developmentChains } from "../helper-hardhat-config"
+const BASE_FEE = "250000000000000000" // 0.25 is this the premium in LINK?
+const GAS_PRICE_LINK = 1e9 // link per gas, is this the gas lane? // 0.000000001 LINK per gas
 
-const BASE_FEE = ethers.utils.parseEther("0.25") // premium for chainlink contract
-const GAS_PRICE_LINK = 1e9 // 1000000000
-
-const deployMocks: DeployFunction = async function name(hre: HardhatRuntimeEnvironment) {
-    const { deployments, getNamedAccounts } = hre
+const deployMocks: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+    const { deployments, getNamedAccounts, network } = hre
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
-    const args = [BASE_FEE, GAS_PRICE_LINK]
-
-    if (developmentChains.includes(network.name)) {
-        log("Local netowrk detected! Deploying Mocks.....................")
-
-        // deploy a mock vrfcoordinatorV2
+    const chainId = network.config.chainId
+    // If we are on a local development network, we need to deploy mocks!
+    if (chainId) {
+        log("Local network detected! Deploying mocks...")
         await deploy("VRFCoordinatorV2Mock", {
             from: deployer,
             log: true,
-            args: args,
+            args: [BASE_FEE, GAS_PRICE_LINK],
         })
 
         log("Mocks Deployed!")
-        log("-----------------------------------------------------")
+        log("----------------------------------")
+
+        log("You are deploying to a local network, you'll need a local network running to interact")
+        log(
+            "Please run `yarn hardhat console --network localhost` to interact with the deployed smart contracts!"
+        )
+        log("----------------------------------")
     }
 }
-
 export default deployMocks
 deployMocks.tags = ["all", "mocks"]

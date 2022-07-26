@@ -29,12 +29,11 @@ const deployRaffle: DeployFunction = async function (hre: HardhatRuntimeEnvironm
         subscriptionID = txnReceipt.events[0].args.subId
 
         // Fund the subscription
-
         await vrfCoordinatorV2Mock.fundSubscription(subscriptionID, VRF_SUB_FUND_AMOUNT)
     } else {
         // else if not on local network
         vrfCoordinatorV2Address = networkConfig[network.config.chainId!]["vrfCoordinatorV2"]
-        subscriptionID = networkConfig[network.config.chainId!]["subscriptionID"]
+        subscriptionID = networkConfig[network.config.chainId!]["subscriptionId"]
     }
 
     const waitBlockConfirmations = developmentChains.includes(network.name)
