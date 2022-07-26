@@ -17,15 +17,15 @@ const deployRaffle: DeployFunction = async function (hre: HardhatRuntimeEnvironm
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     // const chainID = network.config.chainId
-    const chainID = 31337
+    const chainId = network.config.chainId
     let vrfCoordinatorV2Address, subscriptionID
 
     // if on developement chain
-    if (chainID == 31337) {
+    if (chainId) {
         const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
         vrfCoordinatorV2Address = vrfCoordinatorV2Mock.address
         const txnResponse = await vrfCoordinatorV2Mock.createSubscription()
-        const txnReceipt = await txnResponse.wait()
+        const txnReceipt = await txnResponse.wait(1)
         subscriptionID = txnReceipt.events[0].args.subId
 
         // Fund the subscription
