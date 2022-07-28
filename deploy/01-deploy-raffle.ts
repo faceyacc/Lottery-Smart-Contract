@@ -16,7 +16,6 @@ const deployRaffle: DeployFunction = async function (hre: HardhatRuntimeEnvironm
     const { deployments, getNamedAccounts, network, ethers } = hre
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
-    // const chainID = network.config.chainId
     const chainId = network.config.chainId
     let vrfCoordinatorV2Address, subscriptionID
 
