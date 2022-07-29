@@ -15,6 +15,12 @@ const updateContractAddresses: DeployFunction = async function (hre: HardhatRunt
         console.log("Writing to frontend...")
 
         const raffle = await ethers.getContract("Raffle")
+
+        fs.writeFileSync(
+            FRONT_END_ABI_FILE,
+            raffle.interface.format(ethers.utils.FormatTypes.json) as string
+        )
+
         const contractAddressess = JSON.parse(fs.readFileSync(FRONT_END_ADDRESSES_FILE, "utf-8"))
 
         if (chainId.toString() in contractAddressess) {
@@ -29,18 +35,15 @@ const updateContractAddresses: DeployFunction = async function (hre: HardhatRunt
     }
 }
 
-const updateAbi: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    const { ethers } = hre
-    const raffle = await ethers.getContract("Raffle")
+// const updateAbi: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+//     const { ethers } = hre
+//     const raffle = await ethers.getContract("Raffle")
 
-    // let raffleInterface = raffle.interface.format(ethers.utils.FormatTypes.json) as string
-
-    fs.writeFileSync(
-        FRONT_END_ABI_FILE,
-        raffle.interface.format(ethers.utils.FormatTypes.json) as string
-    )
-    // raffle.interface.format(ethers.utils.FormatTypes.json)
-}
+//     fs.writeFileSync(
+//         FRONT_END_ABI_FILE,
+//         raffle.interface.format(ethers.utils.FormatTypes.json) as string
+//     )
+// }
 
 export default updateContractAddresses
 updateContractAddresses.tags = ["all", "frontend"]
